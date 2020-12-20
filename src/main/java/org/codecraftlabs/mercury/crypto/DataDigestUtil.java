@@ -19,16 +19,24 @@ public class DataDigestUtil {
         this.digestAlgorithm = digestAlgorithm;
     }
 
-    public byte[] generateDigest(final String data) throws DigestException {
+    public String generateDigestIntoString(final String data) throws DigestException {
+        byte[] digestContents = generateDigestByteArray(data);
+        return convertFromByteArray(digestContents);
+    }
+
+    public byte[] generateDigestByteArray(final String data) throws DigestException {
         if (data == null || data.isEmpty()) {
             throw new DigestException("Data is empty or null");
         }
+        return generateDigest(data.getBytes(StandardCharsets.UTF_8));
+    }
 
+    public byte[] generateDigest(byte[] contents) throws DigestException {
         try {
             MessageDigest digest = MessageDigest.getInstance(digestAlgorithm.getAlgorithmName());
-            return digest.digest(data.getBytes(StandardCharsets.UTF_8));
+            return digest.digest(contents);
         } catch (NoSuchAlgorithmException exception) {
-            throw new DigestException("Error when processing message digest", exception);
+            throw new DigestException("Digest algorithm is not valid", exception);
         }
     }
 
@@ -41,20 +49,20 @@ public class DataDigestUtil {
 
         try {
             byte[] contents = Files.readAllBytes(filePath);
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(contents);
-            StringBuilder hexString = new StringBuilder();
-
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
+            byte[] digest = generateDigest(contents);
+            return convertFromByteArray(digest);
         } catch (IOException exception) {
             throw new DigestException("Error when opening file", exception);
-        } catch (NoSuchAlgorithmException exception) {
-            throw new DigestException("Digest algorithm is not valid", exception);
         }
+    }
+
+    private String convertFromByteArray(byte[] contents) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : contents) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
