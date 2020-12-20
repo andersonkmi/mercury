@@ -9,13 +9,21 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class DataDigestUtil {
-    private DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
+    private DigestAlgorithm digestAlgorithm = DigestAlgorithm.MD5;
 
     public DataDigestUtil() {
         // No action performed
     }
 
     public DataDigestUtil(DigestAlgorithm digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+    }
+
+    public DigestAlgorithm getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    public void setDigestAlgorithm(DigestAlgorithm digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;
     }
 
