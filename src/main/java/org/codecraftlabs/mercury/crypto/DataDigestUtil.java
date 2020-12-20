@@ -3,6 +3,7 @@ package org.codecraftlabs.mercury.crypto;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,19 +32,29 @@ public class DataDigestUtil {
         }
     }
 
-    public String generateDigestForFile(String file) throws IOException, NoSuchAlgorithmException {
-        byte[] contents = Files.readAllBytes(Paths.get(file));
-
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(contents);
-        StringBuilder hexString = new StringBuilder();
-
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
+    public String generateDigestForFile(String file) throws DigestException {
+        // Validates if the file exists
+        Path filePath = Paths.get(file);
+        if (!Files.exists(filePath) || Files.isDirectory(filePath)) {
+            throw new DigestException("File not found");
         }
 
-        return hexString.toString();
+        try {
+            byte[] contents = Files.readAllBytes(filePath);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(contents);
+            StringBuilder hexString = new StringBuilder();
+
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (IOException exception) {
+            throw new DigestException("Error when opening file", exception);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new DigestException("Digest algorithm is not valid", exception);
+        }
     }
 }
