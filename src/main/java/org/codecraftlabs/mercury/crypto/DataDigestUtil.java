@@ -40,6 +40,10 @@ public class DataDigestUtil {
     }
 
     public byte[] generateDigest(byte[] contents) throws DigestException {
+        if (digestAlgorithm == null) {
+            throw new DigestException("Null digest algorithm");
+        }
+
         try {
             MessageDigest digest = MessageDigest.getInstance(digestAlgorithm.getAlgorithmName());
             return digest.digest(contents);

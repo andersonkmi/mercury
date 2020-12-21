@@ -1,5 +1,6 @@
 package org.codecraftlabs.mercury.crypto;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -53,5 +54,24 @@ public class DataDigestUtilTest {
         util.setDigestAlgorithm(SHA512);
         String digest = util.generateDigestIntoString(SAMPLE_INPUT);
         assertThat(digest, is("879281e1bcc1082c51bb925b37c7dbd8cd427bb980dba905bb3d42717202ec574e03120495aef6ba746b338b17c0ec09e7168dfdd55f1084aa0fa23f71672ffe"));
+    }
+
+    @Test
+    void withEmptyString() {
+        DigestException raisedException = Assertions.assertThrows(DigestException.class, () -> util.generateDigestIntoString(""));
+        assertThat(raisedException.getMessage(), is("Data is empty or null"));
+    }
+
+    @Test
+    void withNullString() {
+        DigestException raisedException = Assertions.assertThrows(DigestException.class, () -> util.generateDigestIntoString(null));
+        assertThat(raisedException.getMessage(), is("Data is empty or null"));
+    }
+
+    @Test
+    void withNullAlgorithm() {
+        util.setDigestAlgorithm(null);
+        DigestException raisedException = Assertions.assertThrows(DigestException.class, () -> util.generateDigestIntoString(SAMPLE_INPUT));
+        assertThat(raisedException.getMessage(), is("Null digest algorithm"));
     }
 }
