@@ -68,7 +68,7 @@ public class DataDigestUtil {
         }
     }
 
-    private String convertFromByteArray(byte[] contents) {
+    public String convertFromByteArray(byte[] contents) {
         StringBuilder hexString = new StringBuilder();
         for (byte b : contents) {
             String hex = Integer.toHexString(0xff & b);
