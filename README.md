@@ -7,3 +7,9 @@ Collection of utility classes related to cryptography and hashing
 ```
 $ gradle clean build
 ```
+
+## Local publish
+
+```
+$ gradle publishToMavenLocal
+```
